@@ -35,4 +35,9 @@
     <string name="addressLabel">Address:</string>
     <string name="phoneNumberLabel">Phone number:</string>
     <string name="bioLabel">Bio:</string>
+    <string name="filterQuestions">Filter questions:</string>
+    <string name="subjectName">Subject name:</string>
+    <string name="complexityLevel">Complexity level:</string>
+    <string name="filterQuestions1">Apply</string>
+    <string name="questionsList">"Questions: "</string>
 </resources>

@@ -15,11 +15,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
+import com.example.final_project_client.Question;
 
 public class ApiHelper {
 
     private static final String BASE_URL = "https://finalprojectserver20240404121625.azurewebsites.net/";
-
     private final RequestQueue requestQueue;
 
     public ApiHelper(Context context) {
@@ -106,7 +106,6 @@ public class ApiHelper {
     public void updateUser(User user, ResponseListener listener, ErrorListener errorListener) {
         JSONObject requestBody = new JSONObject();
         JSONObject userJson = new JSONObject();
-
         try {
             userJson.put("Id", user.getId());
             userJson.put("Username", user.getUsername());
@@ -118,14 +117,13 @@ public class ApiHelper {
             userJson.put("TokenExpires", user.getTokenExpires());
             userJson.put("FullName", user.getFullName());
             userJson.put("Address", user.getAddress());
-            userJson.put("EmailAddress", user.getEmailAddress());
+            userJson.put("EmailAddress", user.getEmail());
             userJson.put("PhoneNumber", user.getPhoneNumber());
             userJson.put("Image", user.getImage());
-            userJson.put("Bio", "Test Bio 2");
+            userJson.put("Bio", user.getBio());
 
+            // add userJson to requestBody
             requestBody.put("user", userJson);
-
-            Log.d("updateUser", requestBody.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -148,7 +146,6 @@ public class ApiHelper {
                 }
         );
         requestQueue.add(request);
-
     }
 
     public void getUser(int id, ResponseListener listener, ErrorListener errorListener) {
@@ -162,7 +159,67 @@ public class ApiHelper {
         requestQueue.add(request);
     }
 
+    public void getQuestions(String subject, String complexity, Response.Listener<List<Question>> listener, Response.ErrorListener errorListener) {
+        JsonArrayRequest request = new JsonArrayRequest(
+                Request.Method.GET,
+                BASE_URL + "api/questions/search?subject=" + subject + "&complexity=" + complexity,
+                null,
+                response -> {
+                    List<Question> questionList = new ArrayList<>();
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject jsonObject = response.getJSONObject(i);
+                            Question question = new Question();
+                            question.setId(jsonObject.getInt("id"));
+                            question.setQuestion(jsonObject.getString("questionText"));
+                            question.setAnswer1(jsonObject.getString("answer1"));
+                            question.setAnswer2(jsonObject.getString("answer2"));
+                            question.setAnswer3(jsonObject.getString("answer3"));
+                            question.setAnswer4(jsonObject.getString("answer4"));
+                            question.setCorrectAnswer(jsonObject.getInt("correctAnswer"));
+                            question.setSubject(jsonObject.getString("subject"));
+                            question.setComplexity(String.valueOf(jsonObject.getInt("complexity")));
+                            questionList.add(question);
+                        }
+                        listener.onResponse(questionList);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        errorListener.onErrorResponse(null);
+                    }
+                },
+                errorListener
+        );
+        requestQueue.add(request);
+    }
 
+    // get subjects /api/subjects
+    public void getSubjects(Response.Listener<List<Subject>> listener, Response.ErrorListener errorListener) {
+        JsonArrayRequest request = new JsonArrayRequest(
+                Request.Method.GET,
+                BASE_URL + "api/subjects",
+                null,
+                response -> {
+                    List<Subject> subjectList = new ArrayList<>();
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject jsonObject = response.getJSONObject(i);
+                            Subject subject = new Subject();
+                            subject.setId(jsonObject.getInt("id"));
+                            subject.setSubjectName(jsonObject.getString("subjectName"));
+                            subject.setSubjectDescription(jsonObject.getString("subjectDescription"));
+                            subject.setSubjectImage(jsonObject.getString("subjectImage"));
+                            subjectList.add(subject);
+                        }
+                        listener.onResponse(subjectList);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        errorListener.onErrorResponse(null);
+                    }
+                },
+                errorListener
+        );
+        requestQueue.add(request);
+    }
 
 }
 

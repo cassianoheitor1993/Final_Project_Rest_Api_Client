@@ -47,7 +47,6 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity {
-
     private EditText editTextName, editTextEmail, editTextPassword,
             editTextConfirmPassword, editTextFullName, editTextAddress,
             editTextPhoneNumber, editTextBio;
@@ -97,20 +96,6 @@ public class ProfileActivity extends AppCompatActivity {
                 assert userDataString != null;
                 JSONObject userData = new JSONObject(userDataString);
                 user.setId(userData.getInt("id"));
-                user.setEmail(userData.getString("email"));
-                user.setPassword(userData.getString("password"));
-                user.setRole(userData.getString("role"));
-                user.setToken(userData.getString("token"));
-                user.setRefreshToken(userData.getString("refreshToken"));
-                user.setTokenExpires(new Date(System.currentTimeMillis() + 31556952000L));
-                user.setRefreshTokenExpires(new Date(System.currentTimeMillis() + 31556952000L));
-                user.setFullName(userData.getString("fullName"));
-                user.setAddress(userData.getString("address"));
-                user.setEmailAddress(userData.getString("emailAddress"));
-                user.setPhoneNumber(userData.getString("phoneNumber"));
-                user.setImage(userData.getString("image"));
-                user.setBio(userData.getString("bio"));
-                user.setUsername(userData.getString("username"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -132,7 +117,6 @@ public class ProfileActivity extends AppCompatActivity {
         buttonSelectPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("ProfileActivity", "Select picture button clicked");
                 if (checkPermission(Manifest.permission.CAMERA)) {
                     openCamera();
                 } else {
@@ -195,6 +179,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void updateUserAndDisplay(JSONObject userData) {
         try {
             user.setId(userData.getInt("id"));
+            user.setUsername(userData.getString("username"));
             user.setEmail(userData.getString("email"));
             user.setPassword(userData.getString("password"));
             user.setRole(userData.getString("role"));
@@ -211,6 +196,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             // Update EditText fields and ImageView with fetched user data
             editTextName.setText(user.getUsername());
+            editTextFullName.setText(user.getFullName());
             editTextEmail.setText(user.getEmail());
             editTextFullName.setText(user.getFullName());
             editTextAddress.setText(user.getAddress());
@@ -257,20 +243,17 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void openCamera() {
-        Log.d("ProfileActivity", "Opening camera");
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(getPackageManager()) != null) {
             File photoFile = null;
             try {
                 photoFile = createImageFile();
-                Log.d("ProfileActivity", "Image file created: " + photoFile.getAbsolutePath());
             } catch (IOException ex) {
                 ex.printStackTrace();
                 Log.e("CameraError", "Error creating image file", ex);
             }
             if (photoFile != null) {
                 imageUri = FileProvider.getUriForFile(this, "com.example.final_project_client.fileprovider", photoFile);
-                Log.d("ProfileActivity", "Image URI: " + imageUri.toString());
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                 try {
                     startActivityForResult(cameraIntent, PICK_IMAGE_REQUEST);
@@ -281,6 +264,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
     }
+
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -288,7 +272,6 @@ public class ProfileActivity extends AppCompatActivity {
         File imageFile = null;
         try {
             imageFile = File.createTempFile(imageFileName, ".jpg", storageDir);
-            Log.d("ProfileActivity", "Image file created: " + imageFile.getAbsolutePath());
         } catch (IOException ex) {
             ex.printStackTrace();
             Log.e("CameraError", "Error creating image file", ex);
@@ -298,10 +281,10 @@ public class ProfileActivity extends AppCompatActivity {
         }
         return imageFile;
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("ProfileActivity", "onActivityResult called with requestCode: " + requestCode + ", resultCode: " + resultCode);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
             if (imageUri != null) {
                 // Load image using Glide
@@ -314,6 +297,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
     }
+
     private void saveImageToDatabase(Uri imageUri) {
         if (imageUri != null) {
             String imagePath = imageUri.toString();
@@ -413,11 +397,9 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void updateUserProfile(User user) {
-
         if (!validateUserInput()) {
             return;
         }
-
         // Show a progress dialog
         ProgressDialog progressDialog = new ProgressDialog(ProfileActivity.this);
         progressDialog.setMessage("Updating profile...");
@@ -447,8 +429,6 @@ public class ProfileActivity extends AppCompatActivity {
                                 builder.setMessage("Profile updated successfully");
                                 builder.setPositiveButton("OK", (dialog, which) -> {
                                     dialog.dismiss();
-                                    // Update local user object and save to shared preferences
-                                    updateUserAndSaveToPrefs(user);
                                 });
                                 builder.show();
                             }, 1000 - timeTaken);
@@ -459,8 +439,6 @@ public class ProfileActivity extends AppCompatActivity {
                             builder.setMessage("Profile updated successfully");
                             builder.setPositiveButton("OK", (dialog, which) -> {
                                 dialog.dismiss();
-                                // Update local user object and save to shared preferences
-                                updateUserAndSaveToPrefs(user);
                             });
                             builder.show();
                         }
@@ -476,39 +454,6 @@ public class ProfileActivity extends AppCompatActivity {
                     progressDialog.dismiss();
                 });
     }
-
-    private void updateUserAndSaveToPrefs(User updatedUser) {
-        // Update local user object
-        this.user = updatedUser;
-
-        // Save updated user to shared preferences
-        saveUserToPrefs(updatedUser);
-    }
-
-    private void saveUserToPrefs(User user) {
-        // Get shared preferences editor
-        SharedPreferences.Editor editor = getSharedPreferences("UserPrefs", MODE_PRIVATE).edit();
-
-        // Put user data in shared preferences
-        editor.putInt("id", user.getId());
-        editor.putString("email", user.getEmail());
-        editor.putString("password", user.getPassword());
-        editor.putString("role", user.getRole());
-        editor.putString("token", user.getToken());
-        editor.putString("refreshToken", user.getRefreshToken());
-        editor.putLong("tokenExpires", user.getTokenExpires().getTime());
-        editor.putLong("refreshTokenExpires", user.getRefreshTokenExpires().getTime());
-        editor.putString("fullName", user.getFullName());
-        editor.putString("address", user.getAddress());
-        editor.putString("emailAddress", user.getEmailAddress());
-        editor.putString("phoneNumber", user.getPhoneNumber());
-        editor.putString("image", user.getImage());
-        editor.putString("bio", user.getBio());
-
-        // Apply changes
-        editor.apply();
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
