@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home_activity"
+        android:title="@string/homeActivity" />
+    <item
+        android:id="@+id/profile"
+        android:title="@string/userProfile" />
+    <item
+        android:id="@+id/previous_quizzes"
+        android:title="@string/previousQuizzes" />
+    <item
+        android:id="@+id/questions_mngmt"
+        android:title="@string/questions_mngmt" />
+    <item
+        android:id="@+id/users_mngmt"
+        android:title="@string/usersMngmt" />
+    <item
+        android:id="@+id/quizzes_mngmt"
+        android:title="@string/quizzesMngmt" />
+    <item
+        android:id="@+id/action_login"
+        android:title="@string/login" />
+    <item
+        android:id="@+id/action_logout"
+        android:title="@string/logout" />
+</menu>

@@ -2,4 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#002642</color>
+    <color name="colorPrimaryDark">#840032</color>
+    <color name="colorAccent">#E59500</color>
+    <color name="colorBackground">#E5DADA</color>
+    <color name="colorText">#02040F</color>
+    <color name="colorOverflowMenu">#002642</color>
+    <color name="colorButtonPressed">#92BEFF</color>
+    <color name="colorButtonFocused">#0055FF</color>
 </resources>
