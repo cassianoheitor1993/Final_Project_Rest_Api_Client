@@ -7,65 +7,86 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class QuestionAdapter extends ArrayAdapter<Question> {
+public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.QuestionViewHolder> {
 
     private final Context context;
-    private final List<Question> questions;
+    private List<Question> questions;
 
     public QuestionAdapter(Context context, List<Question> questions) {
-        super(context, R.layout.question_item, questions);
         this.context = context;
         this.questions = questions;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.question_item, parent, false);
+    public QuestionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.question_item, parent, false);
+        return new QuestionViewHolder(view);
+    }
 
-        TextView questionTextView = rowView.findViewById(R.id.question_text);
+    @Override
+    public void onBindViewHolder(QuestionViewHolder holder, int position) {
         Question currentQuestion = questions.get(position);
-        int correctAnswerIndex = currentQuestion.getCorrectAnswer();
+        holder.bind(currentQuestion);
+    }
 
-        String correctAnswerText = "";
+    @Override
+    public int getItemCount() {
+        return questions.size();
+    }
 
-        switch (correctAnswerIndex) {
-            case 1:
-                correctAnswerText = "Correct: " + currentQuestion.getAnswer1();
-                break;
-            case 2:
-                correctAnswerText = "Correct: " + currentQuestion.getAnswer2();
-                break;
-            case 3:
-                correctAnswerText = "Correct: " + currentQuestion.getAnswer3();
-                break;
-            case 4:
-                correctAnswerText = "Correct: " + currentQuestion.getAnswer4();
-                break;
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
+        notifyDataSetChanged();
+    }
+
+    class QuestionViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView questionTextView;
+
+        QuestionViewHolder(View itemView) {
+            super(itemView);
+            questionTextView = itemView.findViewById(R.id.question_text);
         }
 
-        // Set the question text with all answer options and the correct answer after the respective answer option
-        questionTextView.setText(currentQuestion.getQuestionText() +
-                "\nA) " + currentQuestion.getAnswer1() +
-                "\nB) " + currentQuestion.getAnswer2() +
-                "\nC) " + currentQuestion.getAnswer3() +
-                "\nD) " + currentQuestion.getAnswer4() +
-                "\n" + correctAnswerText);
+        void bind(Question question) {
+            int correctAnswerIndex = question.getCorrectAnswer();
 
-        rowView.setOnClickListener(v -> {
-            Question selectedQuestion = questions.get(position);
-            editQuestion(selectedQuestion);
-        });
+            String correctAnswerText = "";
 
-        return rowView;
+            switch (correctAnswerIndex) {
+                case 1:
+                    correctAnswerText = "Correct: " + question.getAnswer1();
+                    break;
+                case 2:
+                    correctAnswerText = "Correct: " + question.getAnswer2();
+                    break;
+                case 3:
+                    correctAnswerText = "Correct: " + question.getAnswer3();
+                    break;
+                case 4:
+                    correctAnswerText = "Correct: " + question.getAnswer4();
+                    break;
+            }
+
+            questionTextView.setText(question.getQuestionText() +
+                    "\nA) " + question.getAnswer1() +
+                    "\nB) " + question.getAnswer2() +
+                    "\nC) " + question.getAnswer3() +
+                    "\nD) " + question.getAnswer4() +
+                    "\n" + correctAnswerText);
+
+            itemView.setOnClickListener(v -> editQuestion(question));
+        }
     }
 
-    private void editQuestion(Question question) {
+    public void editQuestion(Question question) {
         Intent intent = new Intent(context, EditQuestionActivity.class);
-        intent.putExtra("selected_question", (CharSequence) question);
+        intent.putExtra("selected_question", question);
         context.startActivity(intent);
     }
+
 }

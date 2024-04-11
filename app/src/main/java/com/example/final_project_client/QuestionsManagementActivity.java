@@ -23,6 +23,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,7 +39,8 @@ public class QuestionsManagementActivity extends AppCompatActivity {
     private ApiHelper apiHelper;
     private Spinner spinnerSubjects, spinnerLevels;
     private String[] levels = {"Select complexity", "Easy", "Medium", "High"};
-    private ListView questionsList;
+    private RecyclerView questionsRecyclerView;
+    private QuestionAdapter questionAdapter;
     private TextView questionsListLabel;
     private String[] subjects;
 
@@ -49,11 +53,9 @@ public class QuestionsManagementActivity extends AppCompatActivity {
         setContentView(R.layout.activity_questions_management);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-
-        toolbar.setTitle("Questions Management");
+        toolbar.setTitle("Edit Question");
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         setSupportActionBar(toolbar);
-
         Drawable customOverflowIcon = ContextCompat.getDrawable(this, R.drawable.custom_overflow_icon);
         toolbar.setOverflowIcon(customOverflowIcon);
 
@@ -81,6 +83,12 @@ public class QuestionsManagementActivity extends AppCompatActivity {
 
         spinnerLevels.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, levels));
 
+        // Initialize RecyclerView
+        questionsRecyclerView = findViewById(R.id.questionsList);
+        questionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        questionAdapter = new QuestionAdapter(this, new ArrayList<>());
+        questionsRecyclerView.setAdapter(questionAdapter);
+
         onSpinnerChange();
     }
 
@@ -95,19 +103,12 @@ public class QuestionsManagementActivity extends AppCompatActivity {
                 complexity = "none";
             }
             apiHelper.getQuestions(subject, complexity, response -> {
-                questionsList = findViewById(R.id.questionsList);
-                QuestionAdapter adapter = new QuestionAdapter(this, response);
-                questionsList.setAdapter(adapter);
-                questionsList.setOnItemClickListener((parent, view, position, id) -> {
-                    Question selectedQuestion = response.get(position);
-                    editQuestion(selectedQuestion);
-                });
+                questionAdapter.setQuestions(response);
                 questionsListLabel.setText("Questions (Total: " + response.size() + "):");
             }, error -> {
             });
         }
     }
-
 
     private void onSpinnerChange() {
         spinnerSubjects.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -137,7 +138,7 @@ public class QuestionsManagementActivity extends AppCompatActivity {
 
     private void editQuestion(Question question) {
         Intent intent = new Intent(this, EditQuestionActivity.class);
-        intent.putExtra("selected_question", (CharSequence) question);
+        intent.putExtra("selected_question", question); // Question is Serializable now
         startActivity(intent);
     }
 

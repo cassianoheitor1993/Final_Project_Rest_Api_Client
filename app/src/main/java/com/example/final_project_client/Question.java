@@ -1,5 +1,8 @@
 package com.example.final_project_client;
-public class Question {
+
+import java.io.Serializable;
+
+public class Question implements Serializable {
     private int id;
     private String question;
     private String answer1;
@@ -9,6 +12,7 @@ public class Question {
     private int correctAnswer;
     private String subject;
     private String complexity;
+    private int complexityInt;
 
     // Constructors, getters, and setters
 
@@ -84,7 +88,22 @@ public class Question {
         return complexity;
     }
 
+    public void setComplexityInt(int complexityInt) {
+        this.complexityInt = complexityInt - 1;
+    }
+
+    public int getComplexityInt() {
+        return complexityInt;
+    }
+
+
     public String getQuestionText() {
         return question;
+    }
+
+
+
+    public int getQuestionId() {
+        return id;
     }
 }

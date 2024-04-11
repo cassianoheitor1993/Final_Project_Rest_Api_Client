@@ -221,5 +221,30 @@ public class ApiHelper {
         requestQueue.add(request);
     }
 
+    public void updateQuestion(int questionId, Question question, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("Id", question.getId());
+            requestBody.put("QuestionText", question.getQuestion());
+            requestBody.put("Answer1", question.getAnswer1());
+            requestBody.put("Answer2", question.getAnswer2());
+            requestBody.put("Answer3", question.getAnswer3());
+            requestBody.put("Answer4", question.getAnswer4());
+            requestBody.put("CorrectAnswer", question.getCorrectAnswer());
+            requestBody.put("Subject", question.getSubject());
+            requestBody.put("Complexity", question.getComplexityInt());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.PUT,
+                BASE_URL + "api/questions/" + questionId,
+                requestBody,
+                listener,
+                errorListener
+        );
+        requestQueue.add(request);
+    }
+
 }
 
