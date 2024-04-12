@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,14 +23,14 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
+    RecyclerView quizzesList;
+
+    ApiHelper apiHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        if (isNetworkAvailable()) {
-            ApiHelper apiHelper = new ApiHelper(this);
-        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Home");
@@ -38,6 +39,17 @@ public class MainActivity extends AppCompatActivity {
 
         Drawable customOverflowIcon = ContextCompat.getDrawable(this, R.drawable.custom_overflow_icon);
         toolbar.setOverflowIcon(customOverflowIcon);
+
+        quizzesList = findViewById(R.id.quizzesList);
+
+        apiHelper = new ApiHelper(this);
+
+        if (isNetworkAvailable()) {
+            //apiHelper.getQuizzes(quizzesList);
+        } else {
+            Log.d("Network", "No network available");
+        }
+
     }
 
     @Override

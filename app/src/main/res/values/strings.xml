@@ -59,4 +59,5 @@
     <string name="answer_number_4">Question #4:</string>
     <string name="setSubject">Select the subject:</string>
     <string name="setComplexityLevel">Set complexity level:</string>
+    <string name="select_quiz_to_play">Select the quiz to play:</string>
 </resources>
