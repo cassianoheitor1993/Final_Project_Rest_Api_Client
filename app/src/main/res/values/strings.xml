@@ -59,14 +59,5 @@
     <string name="answer_number_4">Question #4:</string>
     <string name="setSubject">Select the subject:</string>
     <string name="setComplexityLevel">Set complexity level:</string>
-    <string name="addNewQuiz">Add New Quiz</string>
-    <string name="quizName">Quiz Name</string>
-    <string name="quizDescription">Quiz Description</string>
-<string name="addImage">Add Image</string>
-    <string name="teacherID">Teacher ID:</string>
-    <string name="subjectID">Subject ID:</string>
-    <string name="addQuestions">Add Questions:</string>
-    <string name="previous_quizzes">Previous Quizzes</string>
-    <string name="no_previous_quizzes_saved">No Previous Quizzes Saved</string>
-
+    <string name="select_quiz_to_play">Select the quiz to play:</string>
 </resources>

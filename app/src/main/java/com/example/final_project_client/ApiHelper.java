@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.util.Base64;
 import android.util.Log;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -97,6 +99,11 @@ public class ApiHelper {
 
         requestQueue.add(request);
     }
+
+
+    // to get the quizzes the request should be GET: /api/Quizzes/{quiz id}/questions
+    // import the Quiz class and assign the response to a list of quizzes
+    //public void getQuizzes(){}
 
     public interface ResponseListener {
         void onResponse(JSONObject response);
