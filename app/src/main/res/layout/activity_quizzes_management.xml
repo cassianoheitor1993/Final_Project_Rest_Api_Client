@@ -82,8 +82,7 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginTop="10dp"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/placeholder_image" />
+                android:scaleType="fitCenter" />
 
             <TextView
                 android:id="@+id/textViewTeacherID"
@@ -118,6 +117,12 @@
                 android:layout_marginStart="20dp"
                 android:text="789"
                 android:textSize="16sp" />
+            <EditText
+                android:id="@+id/editTextQuestion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your question here"
+                android:padding="10dp" />
 
             <Button
                 android:id="@+id/buttonAddQuestions"

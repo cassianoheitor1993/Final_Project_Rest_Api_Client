@@ -5,10 +5,8 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.QuestionViewHolder> {
@@ -16,6 +14,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
     private final Context context;
     private List<Question> questions;
 
+    // Constructor to initialize the context and questions list
     public QuestionAdapter(Context context, List<Question> questions) {
         this.context = context;
         this.questions = questions;
@@ -88,5 +87,4 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         intent.putExtra("selected_question", question);
         context.startActivity(intent);
     }
-
 }

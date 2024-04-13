@@ -1,6 +1,8 @@
 package com.example.final_project_client;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Base64;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -13,6 +15,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import com.example.final_project_client.Question;
@@ -244,6 +248,68 @@ public class ApiHelper {
                 errorListener
         );
         requestQueue.add(request);
+    }
+
+    public void addImage(Bitmap imageBitmap, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        // Convert the Bitmap image to base64 string
+        String imageData = imageBitmapToBase64(imageBitmap);
+
+        // Create the request body
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("imageData", imageData);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // Create the POST request
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                BASE_URL + "api/images/upload",
+                requestBody,
+                listener,
+                errorListener
+        );
+
+        // Add the request to the request queue
+        requestQueue.add(request);
+    }
+
+    public void addQuestion(Question question, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        // Create the request body
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("questionText", question.getQuestion());
+            requestBody.put("answer1", question.getAnswer1());
+            requestBody.put("answer2", question.getAnswer2());
+            requestBody.put("answer3", question.getAnswer3());
+            requestBody.put("answer4", question.getAnswer4());
+            requestBody.put("correctAnswer", question.getCorrectAnswer());
+            requestBody.put("subject", question.getSubject());
+            requestBody.put("complexity", question.getComplexity());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //POST request
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                BASE_URL + "api/questions/add",
+                requestBody,
+                listener,
+                errorListener
+        );
+
+
+        requestQueue.add(request);
+    }
+
+    // Helper method to convert Bitmap image to base64 string
+    private String imageBitmapToBase64(Bitmap imageBitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        return Base64.encodeToString(imageBytes, Base64.DEFAULT);
     }
 
 }
